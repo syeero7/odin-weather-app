@@ -16,15 +16,14 @@ export function getFilteredWeather(data) {
   const { currentConditions, days, resolvedAddress } = data;
 
   return {
-    location: resolvedAddress,
-    tempUnit: "Fahrenheit",
-    currentWeather: {
+    current: {
+      location: resolvedAddress,
       date: days[0].datetime,
       condition: currentConditions.conditions.split(",")[0],
       temp: currentConditions.temp,
       icon: currentConditions.icon,
     },
-    days: days.slice(1, 7).map((day) => ({
+    daily: days.slice(1, 7).map((day) => ({
       date: day.datetime,
       icon: day.icon,
       tempMin: day.tempmin,
