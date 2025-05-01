@@ -1,0 +1,81 @@
+import { getVerboseDate } from "./utils.js";
+
+export async function createCurrentWeatherElements(current) {
+  const section = document.createElement("section");
+  section.classList.add("main-container");
+
+  const h1 = document.createElement("h1");
+  h1.classList.add("location");
+  h1.textContent = current.location;
+
+  const article = document.createElement("article");
+
+  const h2 = document.createElement("h2");
+  h2.classList.add("weather-date");
+  const { weekday, month, day } = getVerboseDate(current.date, "long");
+  h2.textContent = `${weekday}, ${month} ${day}`;
+
+  const img = document.createElement("img");
+  img.classList.add("weather-img");
+  const module = await import(`../assets/${current.icon}.svg`);
+  img.src = module.default;
+  img.alt = current.icon.replace(/-/g, " ");
+
+  const h3 = document.createElement("h3");
+  h3.classList.add("weather-temp");
+  h3.textContent = `${Math.round(current.temp)} ℉`;
+
+  const para = document.createElement("p");
+  para.classList.add("weather-condition");
+  para.textContent = current.condition;
+
+  article.append(h2, img, h3, para);
+  section.append(h1, article);
+  return section;
+}
+
+export async function createDailyWeatherElements(daily) {
+  const section = document.createElement("section");
+  section.classList.add("daily-container");
+
+  const promises = daily.map(async (day) => {
+    const article = document.createElement("article");
+
+    const h2 = document.createElement("h2");
+    h2.classList.add("weather-date");
+    const { weekday, month, day: d } = getVerboseDate(day.date, "short");
+    h2.textContent = `${weekday}, ${month} ${d}`;
+
+    const img = document.createElement("img");
+    img.classList.add("weather-img");
+    const module = await import(`../assets/${day.icon}.svg`);
+    img.src = module.default;
+    img.alt = day.icon.replace(/-/g, " ");
+
+    const div = document.createElement("div");
+    div.classList.add("temp-minmax");
+
+    const h3Max = document.createElement("h3");
+    const textMax = document.createTextNode("Max: ");
+    const spanMax = document.createElement("span");
+    spanMax.classList.add("weather-temp");
+    spanMax.classList.add("weather-temp");
+    spanMax.textContent = `${Math.round(day.tempMax)} ℉`;
+
+    const h3Min = document.createElement("h3");
+    const textMin = document.createTextNode("Min: ");
+    const spanMin = document.createElement("span");
+    spanMin.classList.add("weather-temp");
+    spanMin.textContent = `${Math.round(day.tempMin)} ℉`;
+
+    h3Max.append(textMax, spanMax);
+    h3Min.append(textMin, spanMin);
+    div.append(h3Max, h3Min);
+    article.append(h2, img, div);
+    return article;
+  });
+
+  const dailyElements = await Promise.all(promises);
+  section.append(...dailyElements);
+  return section;
+}
