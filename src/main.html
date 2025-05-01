@@ -8,14 +8,14 @@
   <body>
     <header>
       <form class="weather-form">
-        <input type="text" aria-label="location" placeholder="London" />
+        <input type="text" aria-label="location" placeholder="London" name="location" />
         <button type="submit" aria-label="search" title="search"></button>
       </form>
 
       <div class="temp-toggle">
         <label>
           <span>&#8457;</span>
-          <input type="radio" name="temperature" value="Fahrenheit" />
+          <input type="radio" name="temperature" value="Fahrenheit" checked />
         </label>
 
         <label>
@@ -25,8 +25,7 @@
       </div>
     </header>
 
-    <main class="main-content">
-      <div data-loading="false" class="loader"></div>
-    </main>
+    <div data-loading="false" class="loader"></div>
+    <main class="main-content"></main>
   </body>
 </html>
