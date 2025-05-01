@@ -79,3 +79,15 @@ export async function createDailyWeatherElements(daily) {
   section.append(...dailyElements);
   return section;
 }
+
+export function createErrorElements(data) {
+  const section = document.createElement("section");
+  section.classList.add("error-container");
+
+  const h1 = document.createElement("h1");
+  const locationError = `"${data.location}": Invalid location. Maybe it's on another planet?`;
+  h1.textContent = `${data.statusCode === 400 ? locationError : "Fetch failed"}`;
+
+  section.appendChild(h1);
+  return section;
+}
