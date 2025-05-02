@@ -27,12 +27,12 @@ async function handleSubmit(e) {
   setLoadingState(true);
   const { data, error } = await getWeather(location);
   removeContent();
-  setLoadingState(false);
 
   if (error) {
     const errorElements = createErrorElements({ statusCode: error.status, location });
     content.appendChild(errorElements);
     setTempCategory();
+    setLoadingState(false);
 
     return;
   }
@@ -44,6 +44,7 @@ async function handleSubmit(e) {
   content.append(currentWeather, dailyWeather);
   updateTempValues();
   setTempCategory(current.temp);
+  setLoadingState(false);
 }
 
 function updateTempValues() {
