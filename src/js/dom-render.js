@@ -24,12 +24,15 @@ async function handleSubmit(e) {
   const location = formData.get("location");
   if (!location.trim()) return;
 
+  setLoadingState(true);
   const { data, error } = await getWeather(location);
   removeContent();
+  setLoadingState(false);
 
   if (error) {
     const errorElements = createErrorElements({ statusCode: error.status, location });
     content.appendChild(errorElements);
+    setTempCategory();
 
     return;
   }
@@ -40,6 +43,7 @@ async function handleSubmit(e) {
 
   content.append(currentWeather, dailyWeather);
   updateTempValues();
+  setTempCategory(current.temp);
 }
 
 function updateTempValues() {
@@ -73,4 +77,24 @@ function removeContent() {
   while (content.firstChild) {
     content.firstChild.remove();
   }
+}
+
+function setLoadingState(state) {
+  document.querySelector("[data-loading]").dataset.loading = state;
+}
+
+function setTempCategory(temp) {
+  let category;
+
+  if (temp === undefined) {
+    category = "";
+  } else if (temp < 45) {
+    category = "cold";
+  } else if (temp < 75) {
+    category = "moderate";
+  } else {
+    category = "hot";
+  }
+
+  content.dataset.tempCategory = category;
 }
