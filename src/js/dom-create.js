@@ -26,7 +26,8 @@ export async function createCurrentWeatherElements(current) {
 
   const h3 = document.createElement("h3");
   h3.classList.add("weather-temp");
-  h3.textContent = `${Math.round(current.temp)} ℉`;
+  h3.textContent = `${Math.round(current.temp)}°`;
+  h3.dataset.tempUnit = "Fahrenheit";
 
   const para = document.createElement("p");
   para.classList.add("weather-condition");
@@ -62,24 +63,21 @@ export async function createDailyWeatherElements(daily) {
     const div2 = document.createElement("div");
     div2.classList.add("temp-minmax");
 
-    const h3Max = document.createElement("h3");
-    const textMax = document.createTextNode("Max: ");
-    const spanMax = document.createElement("span");
-    spanMax.classList.add("weather-temp");
-    spanMax.classList.add("weather-temp");
-    spanMax.textContent = `${Math.round(day.tempMax)} ℉`;
+    const h3 = document.createElement("h3");
 
-    const h3Min = document.createElement("h3");
-    const textMin = document.createTextNode("Min: ");
+    const spanMax = document.createElement("span");
+    spanMax.classList.add("weather-temp", "temp-max");
+    spanMax.dataset.tempUnit = "Fahrenheit";
+    spanMax.textContent = `${Math.round(day.tempMax)}°`;
+
     const spanMin = document.createElement("span");
-    spanMin.classList.add("weather-temp");
-    spanMin.textContent = `${Math.round(day.tempMin)} ℉`;
+    spanMin.classList.add("weather-temp", "temp-min");
+    spanMin.dataset.tempUnit = "Fahrenheit";
+    spanMin.textContent = `${Math.round(day.tempMin)}°`;
 
     div.appendChild(img);
-    h3Max.append(textMax, spanMax);
-    h3Min.append(textMin, spanMin);
-    div2.append(h3Max, h3Min);
-    article.append(h2, div, div2);
+    h3.append(spanMax, spanMin);
+    article.append(h2, div, h3);
     return article;
   });
 

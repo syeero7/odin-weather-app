@@ -1,12 +1,10 @@
 import { getWeather, getFilteredWeather } from "./weather.js";
-import { convertToCelsius, convertToFahrenheit, getObjectKey } from "./utils.js";
+import { convertToCelsius, convertToFahrenheit } from "./utils.js";
 import {
   createCurrentWeatherElements,
   createDailyWeatherElements,
   createErrorElements,
 } from "./dom-create.js";
-
-const TEMP_UNITS = { "℉": "Fahrenheit", "℃": "Celsius" };
 
 const content = document.querySelector("main");
 const weatherForm = document.querySelector(".weather-form");
@@ -20,18 +18,21 @@ export function initialize() {
 async function handleSubmit(e) {
   e.preventDefault();
 
-  const formData = new FormData(e.currentTarget);
+  const formData = new FormData(weatherForm);
   const location = formData.get("location");
   if (!location.trim()) return;
 
+  weatherForm.reset();
   setLoadingState(true);
+  setFormDisabledState(true);
+
   const { data, error } = await getWeather(location);
+  setFormDisabledState(false);
   removeContent();
 
   if (error) {
     const errorElements = createErrorElements({ statusCode: error.status, location });
     content.appendChild(errorElements);
-    setTempCategory();
     setLoadingState(false);
 
     return;
@@ -43,7 +44,6 @@ async function handleSubmit(e) {
 
   content.append(currentWeather, dailyWeather);
   updateTempValues();
-  setTempCategory(current.temp);
   setLoadingState(false);
 }
 
@@ -52,24 +52,24 @@ function updateTempValues() {
   if (!update) return;
 
   const selectedTempUnit = tempToggle.querySelector("input:checked").value;
-  const tempElements = document.querySelectorAll(".weather-temp");
-  const temperatureUnit = getObjectKey(TEMP_UNITS, selectedTempUnit);
+  const tempElements = document.querySelectorAll("[data-temp-unit]");
   const convertTemperature =
     selectedTempUnit === "Fahrenheit" ? convertToFahrenheit : convertToCelsius;
 
   tempElements.forEach((element) => {
-    const prevTempValue = Number(element.textContent.split(" ")[0]);
+    const prevTempValue = Number(element.textContent.replace("°", ""));
     const newTempValue = convertTemperature(prevTempValue);
-    element.textContent = `${Math.round(newTempValue)} ${temperatureUnit}`;
+    element.textContent = `${Math.round(newTempValue)}°`;
+    element.dataset.tempUnit = selectedTempUnit;
   });
 }
 
 function shouldUpdateTempValues() {
-  const currentTemp = document.querySelector(".weather-temp");
+  const currentTemp = document.querySelector("[data-temp-unit]");
   if (!currentTemp) return false;
 
   const selectedTempUnit = tempToggle.querySelector("input:checked").value;
-  const displayedTempUnit = TEMP_UNITS[currentTemp.textContent.split(" ")[1]];
+  const displayedTempUnit = currentTemp.dataset.tempUnit;
 
   return selectedTempUnit !== displayedTempUnit;
 }
@@ -84,18 +84,6 @@ function setLoadingState(state) {
   document.querySelector("[data-loading]").dataset.loading = state;
 }
 
-function setTempCategory(temp) {
-  let category;
-
-  if (temp === undefined) {
-    category = "";
-  } else if (temp < 45) {
-    category = "cold";
-  } else if (temp < 75) {
-    category = "moderate";
-  } else {
-    category = "hot";
-  }
-
-  content.dataset.tempCategory = category;
+function setFormDisabledState(state) {
+  weatherForm.dataset.disabled = state;
 }
