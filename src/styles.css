@@ -254,7 +254,8 @@ header {
   background-position: center;
   background-size: 6em;
   background-repeat: no-repeat;
-  background-color: hsla(from var(--background) h s 90% / 0.1);
+  background-color: var(--background);
+  z-index: 1;
 
   &[data-loading="true"] {
     display: block;
