@@ -7,15 +7,11 @@
 :root {
   --ff-sans-serif: system-ui, sans-serif;
 
-  --cold: #8ac4ff;
-  --moderate: #ffd76b;
-  --hot: #ff8c42;
-
-  --text: #1b1e00;
-  --background: #fffffa;
+  --text: #05080d;
+  --background: #fafbfd;
   --accent: #34cf58;
 
-  --card-bg: hsla(from var(--background) h s l / 0.1);
+  --main-background: hsla(from var(--background) h s 30% / 0.1);
   --card-border: 2px solid hsla(from var(--text) h s l / 0.2);
 }
 
@@ -44,6 +40,11 @@ header {
   display: flex;
   gap: 0.5em;
   max-width: fit-content;
+
+  &[data-disabled="true"] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 
   & input {
     flex: 1;
@@ -74,6 +75,11 @@ header {
       border-color: hsla(from var(--text) h s l / 0.5);
       background-color: hsla(from var(--background) h s l / 0.3);
     }
+  }
+
+  &:disabled {
+    background-color: var(--accent);
+    pointer-events: none;
   }
 }
 
@@ -122,21 +128,10 @@ header {
 
 .main-content {
   min-height: calc(100vh - 80px);
+  background-color: var(--main-background);
 
-  &[data-temp-category=""] {
+  &:has(.error-container) {
     background-color: var(--background);
-  }
-
-  &[data-temp-category="cold"] {
-    background-color: var(--cold);
-  }
-
-  &[data-temp-category="moderate"] {
-    background-color: var(--moderate);
-  }
-
-  &[data-temp-category="hot"] {
-    background-color: var(--hot);
   }
 }
 
@@ -148,8 +143,8 @@ header {
   margin-inline: 0.5em;
 
   & h1 {
-    font-size: 2.2em;
-    margin-block: 0.5em;
+    font-size: 2.5em;
+    margin-block: 1em;
   }
 
   & .img-container {
@@ -163,23 +158,23 @@ header {
     grid-template-rows: 1fr 9.375em 1em;
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
-    padding: 0.75em;
+    padding: 1em;
     border-radius: 8px;
     border: var(--card-border);
-    background-color: var(--card-bg);
+    background-color: var(--background);
 
     .weather-date {
       grid-area: 1 / 1 / 1 / 3;
     }
 
     .weather-temp {
-      font-size: 3em;
+      font-size: 3.5em;
     }
 
     .weather-condition {
       grid-area: 3 / 1 / 3 / 3;
       font-style: italic;
-      font-weight: 500;
+      color: hsla(from var(--text) h s l / 0.6);
     }
   }
 }
@@ -198,7 +193,7 @@ header {
   & article {
     display: flex;
     border: var(--card-border);
-    background-color: var(--card-bg);
+    background-color: var(--background);
     border-radius: 8px;
     padding: 0.75em;
     overflow-x: auto;
@@ -207,15 +202,18 @@ header {
 
     & h2 {
       min-width: 11ch;
+      font-weight: 600;
     }
 
-    .temp-minmax {
-      display: grid;
+    h3 {
+      display: flex;
       gap: 0.5em;
+      padding-left: 1em;
+      font-weight: 500;
+    }
 
-      & h3 {
-        min-width: 10ch;
-      }
+    .temp-min {
+      color: hsla(from var(--text) h s l / 0.6);
     }
   }
 }
@@ -227,7 +225,7 @@ header {
   & h1 {
     text-align: center;
     text-wrap: balance;
-    font-size: 2.2em;
+    font-size: 2.5em;
   }
 }
 
